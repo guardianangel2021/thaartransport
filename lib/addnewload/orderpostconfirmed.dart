@@ -1,20 +1,18 @@
-// ignore: file_names
-// ignore_for_file: file_names, non_constant_identifier_names, prefer_const_constructors, unused_local_variable
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:thaartransport/Utils/firebase.dart';
+import 'package:thaartransport/addnewload/postmodal.dart';
 import 'package:thaartransport/screens/homepage.dart';
+import 'package:thaartransport/services/userservice.dart';
+import 'package:thaartransport/utils/constants.dart';
+import 'package:thaartransport/utils/firebase.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class OrderPostConfirmed extends StatefulWidget {
-  final id;
+  final String id;
   OrderPostConfirmed(this.id);
 
   @override
@@ -24,123 +22,126 @@ class OrderPostConfirmed extends StatefulWidget {
 class _OrderPostConfirmedState extends State<OrderPostConfirmed> {
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: StreamBuilder<DocumentSnapshot>(
+    return StreamBuilder<DocumentSnapshot>(
         stream: postRef.doc(widget.id).snapshots(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
-            return const Scaffold(body: Text("Somthing went Wrong"));
+            return Scaffold(body: Text("Somthing went Wrong"));
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(body: Center(child: Text("Loading...")));
+            return Scaffold(body: Text("Loading..."));
           }
-          final data = snapshot.requireData;
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 200,
-                title: Text('Load Details'),
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                        margin: EdgeInsets.only(top: 130),
-                        child: Column(
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text.rich(TextSpan(
-                                text: data['sourcecity'],
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontSize: 25, color: Colors.white)),
+          final PostModal posts =
+              PostModal.fromJson(snapshot.data!.data() as Map<String, dynamic>);
+
+          return WillPopScope(
+              onWillPop: () async {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+                return true;
+              },
+              child: Scaffold(
+                body: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      expandedHeight: 200,
+                      titleSpacing: 3,
+                      title: Text(
+                          "Posted at ${posts.loadposttime!.split(',')[1]}${posts.loadposttime!.split(',')[2]}",
+                          style: TextStyle(fontSize: 13)),
+                      pinned: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                          background: Container(
+                              margin: EdgeInsets.only(top: 130),
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  TextSpan(
-                                    text: "(" + data['sourcestate'] + ")",
-                                    style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                            fontSize: 25, color: Colors.white)),
-                                  )
-                                ])),
-                            // SizedBox(height: 15),
-                            Icon(
-                              Icons.arrow_downward,
-                              color: Colors.green[800],
+                                  Text(posts.sourcelocation!,
+                                      style: GoogleFonts.lato(
+                                          textStyle: const TextStyle(
+                                              fontSize: 25,
+                                              color: Colors.white))),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Icon(
+                                    Icons.arrow_downward,
+                                    color: Constants.white,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(posts.destinationlocation!,
+                                      style: GoogleFonts.lato(
+                                          textStyle: const TextStyle(
+                                              fontSize: 25,
+                                              color: Colors.white)))
+                                ],
+                              ))),
+                      actions: [
+                        Container(
+                          margin: EdgeInsets.only(right: 20),
+                          child: PopupMenuButton(
+                            icon: Icon(
+                              Icons.more_vert,
                             ),
-                            Text.rich(TextSpan(
-                                text: data['destinationcity'],
-                                style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontSize: 25, color: Colors.white)),
-                                children: [
-                                  TextSpan(
-                                    text: "(" + data['destinationstate'] + ")",
-                                    style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                            fontSize: 25, color: Colors.white)),
-                                  )
-                                ])),
-                          ],
-                        ))),
-                actions: [
-                  Container(
-                    margin: EdgeInsets.only(right: 20),
-                    child: PopupMenuButton(
-                      icon: Icon(
-                        Icons.more_vert,
-                      ),
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                            value: 1,
-                            enabled: true,
-                            child: Text(
-                              "disable",
-                            )),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                  value: 1,
+                                  enabled: true,
+                                  child: Text(
+                                    "disable",
+                                  )),
+                            ],
+                            onSelected: (menu) {
+                              if (menu == 1) {
+                                CoolAlert.show(
+                                    backgroundColor: Colors.white,
+                                    context: context,
+                                    type: CoolAlertType.error,
+                                    text:
+                                        'Are you sure you want to disable this post from the live market?',
+                                    confirmBtnColor: Colors.green,
+                                    animType: CoolAlertAnimType.slideInUp,
+                                    cancelBtnText: "Cancel",
+                                    showCancelBtn: true,
+                                    onConfirmBtnTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    onCancelBtnTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    confirmBtnText: "Yes",
+                                    title: 'Disable Confirmation');
+                              }
+                            },
+                          ),
+                        ),
                       ],
-                      onSelected: (menu) {
-                        if (menu == 1) {
-                          CoolAlert.show(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              type: CoolAlertType.error,
-                              text:
-                                  'Are you sure you want to disable this post from the live market?',
-                              confirmBtnColor: Colors.green,
-                              animType: CoolAlertAnimType.slideInUp,
-                              cancelBtnText: "Cancel",
-                              showCancelBtn: true,
-                              onConfirmBtnTap: () {
-                                Navigator.pop(context);
-                              },
-                              onCancelBtnTap: () {
-                                Navigator.pop(context);
-                              },
-                              confirmBtnText: "Yes",
-                              title: 'Disable Confirmation');
-                        }
-                      },
                     ),
-                  ),
-                ],
-              ),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                LoadPosted(
-                    data['material'], data['quantity'], data['paymentmode']),
-                tabBar(),
-              ]))
-            ],
-          );
-        },
-      ),
-    );
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                      LoadPosted(
+                          posts.material!.toUpperCase(),
+                          posts.quantity!.toUpperCase(),
+                          posts.paymentmode!.toUpperCase(),
+                          posts.expectedprice!,
+                          posts.priceunit!),
+                      tabBar(),
+                    ]))
+                  ],
+                ),
+              ));
+        });
   }
 
-  Widget LoadPosted(String material, String quantity, String PaymentMode) {
+  Widget LoadPosted(String material, String quantity, String PaymentMode,
+      String expectedPrice, String priceUnit) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Card(
       elevation: 10,
       child: Container(
+        height: 200,
         width: width,
         padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
         decoration: BoxDecoration(
@@ -166,7 +167,7 @@ class _OrderPostConfirmedState extends State<OrderPostConfirmed> {
                           SizedBox(
                             width: width * 0.02,
                           ),
-                          Text(
+                          const Text(
                             "Load Posted",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
@@ -185,60 +186,76 @@ class _OrderPostConfirmedState extends State<OrderPostConfirmed> {
             const Divider(
               color: Colors.black,
             ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.check,
-                  size: 15,
-                ),
-                SizedBox(
-                  width: width * 0.02,
-                ),
-                Text(material),
-              ],
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/product.png',
+                            width: 20,
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: width * 0.02,
+                          ),
+                          Text("Material: $material"),
+                        ],
+                      ),
+                      SizedBox(
+                        height: height * 0.01,
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/quantity.png',
+                            width: 20,
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: width * 0.02,
+                          ),
+                          Text("Quantity: $quantity Tons"),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/payment.png',
+                            width: 20,
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: width * 0.02,
+                          ),
+                          Text('Payment Mode: $PaymentMode'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        expectedPrice,
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        priceUnit,
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
-            SizedBox(
-              height: height * 0.01,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.check,
-                  size: 15,
-                ),
-                SizedBox(
-                  width: width * 0.02,
-                ),
-                Text(quantity),
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.check,
-                  size: 15,
-                ),
-                SizedBox(
-                  width: width * 0.02,
-                ),
-                Text('$PaymentMode Tonnes(s) LCV'),
-              ],
-            ),
-            ExpansionTileCard(
-              elevation: 0,
-              elevationCurve: Curves.bounceIn,
-              title: Text("View remarks"),
-              children: [
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                      "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups."),
-                )
-              ],
-            )
           ],
         ),
       ),

@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 //post load controllers
 var controller1 = TextEditingController(text: '');
 var controller2 = TextEditingController();
-var controller3 = TextEditingController();
-var controller4 = TextEditingController();
+var material = TextEditingController();
 var quantity = TextEditingController();
+var priceUnit = TextEditingController();
+var expectedPrice = TextEditingController();
+var paymentMode = TextEditingController();
+var expireLoad = TextEditingController();
+var advancePay = TextEditingController();
+
 //Source controller
 var source = TextEditingController();
 

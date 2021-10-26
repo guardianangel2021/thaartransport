@@ -8,7 +8,7 @@ import 'package:thaartransport/Test/textfield.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/Utils/googleservice.dart';
 import 'package:thaartransport/addnewload/PostLoad.dart';
-import 'package:thaartransport/Utils/controllers.dart';
+import 'package:thaartransport/utils/controllers.dart';
 
 class SourceLocation extends StatefulWidget {
   @override
@@ -70,7 +70,7 @@ class _SourceLocationState extends State<SourceLocation> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                TextField(
+                TextFormField(
                   autofocus: true,
                   controller: source,
                   decoration: InputDecoration(

@@ -5,51 +5,48 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostModal {
-  String? breadth;
   String? destinationlocation;
   String? sourcelocation;
 
   String? expectedprice;
 
-  String? height;
+  String? id;
   String? postexpiretime;
-  String? length;
+  String? usernumber;
   String? loadposttime;
   String? material;
   String? ownerid;
-  String? paymentoption;
+  String? paymentmode;
   String? priceunit;
   String? postid;
   String? quantity;
   PostModal({
-    this.breadth,
-    this.destinationlocation,
-    this.sourcelocation,
-    this.expectedprice,
-    this.height,
-    this.postexpiretime,
-    this.length,
+    required this.destinationlocation,
+    required this.sourcelocation,
+    required this.expectedprice,
+    required this.postexpiretime,
     required this.loadposttime,
-    this.material,
-    required this.ownerid,
-    required this.paymentoption,
-    required this.priceunit,
-    this.postid,
+    required this.material,
+    required this.id,
     required this.quantity,
+    required this.ownerid,
+    required this.paymentmode,
+    required this.priceunit,
+    required this.postid,
   });
 
   PostModal.fromJson(Map<String, dynamic> json) {
-    breadth = json['breadth'];
     destinationlocation = json['destinationlocation'];
     sourcelocation = json['sourcelocation'];
     expectedprice = json['expectedprice'];
-    height = json['height'];
+    id = json['id'];
+
     postexpiretime = json['postexpiretime'];
-    length = json['length'];
+    usernumber = json['usernumber'];
     loadposttime = json['loadposttime'];
     material = json['material'];
     ownerid = json['ownerid'];
-    paymentoption = json['paymentoption'];
+    paymentmode = json['paymentmode'];
     priceunit = json['priceunit'];
     postid = json['postid'];
     quantity = json['quantity'];
@@ -57,17 +54,17 @@ class PostModal {
 
   Map<String, dynamic> toJson() {
     final data = Map<String, dynamic>();
-    data['breadth'] = breadth;
+
     data['destinationlocation'] = destinationlocation;
     data['sourcelocation'] = sourcelocation;
     data['expectedprice'] = expectedprice;
-    data['height'] = height;
+    data['id'] = id;
     data['postexpiretime'] = postexpiretime;
-    data['length'] = length;
+    data['usernumber'] = usernumber;
     data['loadposttime'] = loadposttime;
     data['material'] = material;
     data['ownerid'] = ownerid;
-    data['paymentoption'] = paymentoption;
+    data['paymentmode'] = paymentmode;
     data['priceunit'] = priceunit;
     data['postid'] = postid;
     data['quantity'] = quantity;
