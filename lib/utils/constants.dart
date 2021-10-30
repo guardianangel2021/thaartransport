@@ -19,8 +19,10 @@ class Constants {
   static Color btninactive = Color(0xffCCCCCC);
   static Color btntextactive = Color(0xff0D2C40);
   static Color btntextinactive = Color(0xffC3C3C3);
+  static Color borderColor = Color(0xffF8A828);
 
   static Color alert = Color(0xffd81848);
+  static Color h2lhbg = Color(0xfff0e8f0);
 
   static Color redwhitelight = Color(0xfff0e8f0);
   static Color inactivedot = Color(0xff707878);

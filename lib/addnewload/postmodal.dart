@@ -9,17 +9,27 @@ class PostModal {
   String? sourcelocation;
 
   String? expectedprice;
-
+  String? remarks;
   String? id;
   String? postexpiretime;
   String? usernumber;
   String? loadposttime;
   String? material;
-  String? ownerid;
+  String? ownerId;
   String? paymentmode;
   String? priceunit;
   String? postid;
+  String? dp;
+  String? loadstatus;
   String? quantity;
+  String? rate;
+  String? bidtime;
+  String? biduserid;
+  String? bidresponse;
+  String? bidusername;
+  String? biduserlocation;
+  String? biduserdp;
+  String? loadorderstatus;
   PostModal({
     required this.destinationlocation,
     required this.sourcelocation,
@@ -29,9 +39,20 @@ class PostModal {
     required this.material,
     required this.id,
     required this.quantity,
-    required this.ownerid,
+    required this.loadorderstatus,
+    required this.ownerId,
+    required this.rate,
+    required this.dp,
+    required this.bidtime,
+    required this.biduserid,
+    required this.bidusername,
+    required this.biduserlocation,
+    required this.biduserdp,
+    required this.bidresponse,
+    required this.remarks,
     required this.paymentmode,
     required this.priceunit,
+    required this.loadstatus,
     required this.postid,
   });
 
@@ -40,12 +61,22 @@ class PostModal {
     sourcelocation = json['sourcelocation'];
     expectedprice = json['expectedprice'];
     id = json['id'];
-
+    loadstatus = json['loadstatus'];
+    dp = json['dp'];
+    bidtime = json['bidtime'];
+    biduserid = json['biduserid'];
+    bidusername = json['bidusername'];
+    biduserdp = json['biduserdp'];
+    biduserlocation = json['biduserlocation'];
+    rate = json['rate'];
+    bidresponse = json['bidresponse'];
+    loadorderstatus = json['loadorderstatus'];
+    remarks = json['remarks'];
     postexpiretime = json['postexpiretime'];
     usernumber = json['usernumber'];
     loadposttime = json['loadposttime'];
     material = json['material'];
-    ownerid = json['ownerid'];
+    ownerId = json['ownerId'];
     paymentmode = json['paymentmode'];
     priceunit = json['priceunit'];
     postid = json['postid'];
@@ -54,16 +85,26 @@ class PostModal {
 
   Map<String, dynamic> toJson() {
     final data = Map<String, dynamic>();
-
+    data['rate'] = rate;
     data['destinationlocation'] = destinationlocation;
     data['sourcelocation'] = sourcelocation;
     data['expectedprice'] = expectedprice;
     data['id'] = id;
+    data['dp'] = dp;
+    data['bidtime'] = bidtime;
+    data['biduserid'] = biduserid;
+    data['bidusername'] = bidusername;
+    data['biduserdp'] = biduserdp;
+    data['bidresponse'] = bidresponse;
+    data['biduserlocation'] = biduserlocation;
+    data['loadorderstatus'] = loadorderstatus;
+    data['remarks'] = remarks;
     data['postexpiretime'] = postexpiretime;
+    data['loadstatus'] = loadstatus;
     data['usernumber'] = usernumber;
     data['loadposttime'] = loadposttime;
     data['material'] = material;
-    data['ownerid'] = ownerid;
+    data['ownerId'] = ownerId;
     data['paymentmode'] = paymentmode;
     data['priceunit'] = priceunit;
     data['postid'] = postid;

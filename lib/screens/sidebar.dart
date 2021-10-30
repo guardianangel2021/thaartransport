@@ -131,18 +131,25 @@ class _SideBarState extends State<SideBar> {
                   title: Text("Contact us"),
                   subtitle: Text("Facing an issue? We're there to help you"),
                 ),
-                RaisedButton(
-                    onPressed: () async {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return buildSheet();
-                          });
-                    },
-                    child: Container(
-                        width: width,
-                        alignment: Alignment.center,
-                        child: Text("LogOut")))
+                Container(
+                  width: width,
+                  height: height * 0.06,
+                  child: RaisedButton.icon(
+                      color: Constants.btnBG,
+                      textColor: Constants.white,
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return buildSheet();
+                            });
+                      },
+                      icon: Icon(Icons.logout_outlined),
+                      label: const Text("Logout")),
+                ),
+                SizedBox(
+                  height: height * 0.02,
+                )
               ],
             ),
           ),
@@ -150,18 +157,26 @@ class _SideBarState extends State<SideBar> {
   }
 
   Widget buildSheet() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return Container(
       padding: EdgeInsets.all(10),
       child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            height: 8,
-            width: 50,
-            decoration: BoxDecoration(
-                color: Colors.grey[500],
-                borderRadius: BorderRadius.circular(30)),
+          Align(
+              alignment: Alignment.center,
+              child: Container(
+                height: 8,
+                width: 50,
+                decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.circular(30)),
+              )),
+          SizedBox(
+            height: 20,
           ),
           const Text(
             "Are you sure",
@@ -177,27 +192,40 @@ class _SideBarState extends State<SideBar> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              RaisedButton(
-                color: Colors.red,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'No',
-                  style: TextStyle(color: Constants.white),
-                ),
-              ),
-              RaisedButton(
-                  color: Colors.red,
-                  onPressed: () async {
-                    AuthService().logOut(context);
-                  },
-                  child: Text(
-                    "yes",
-                    style: TextStyle(
+              Expanded(
+                  child: RaisedButton(
                       color: Constants.white,
-                    ),
-                  ))
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: height * 0.06,
+                        decoration: BoxDecoration(),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'GO BACK',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ))),
+              SizedBox(
+                width: width * 0.03,
+              ),
+              Expanded(
+                  child: RaisedButton(
+                      color: Constants.btnBG,
+                      onPressed: () async {
+                        AuthService().logOut(context);
+                      },
+                      child: Container(
+                        height: height * 0.06,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "YES LOGOUT",
+                          style: TextStyle(
+                            color: Constants.white,
+                          ),
+                        ),
+                      )))
             ],
           )
         ],

@@ -63,6 +63,15 @@ dependencies:
   jiffy: ^4.1.0
   timeago: ^3.1.0
   pull_to_refresh: ^2.0.0
+  flutter_image_compress: ^1.1.0
+  fluttericon: ^2.0.0
+  material_dialogs: ^1.1.1
+  google_api_headers: ^1.1.1
+  google_maps_webservice: ^0.0.19
+  flutter_dotenv: ^5.0.2
+  google_place: ^0.4.3
+  # data_connection_checker: ^0.3.4
+  # animations: ^2.0.2
 
 dev_dependencies:
   flutter_test:

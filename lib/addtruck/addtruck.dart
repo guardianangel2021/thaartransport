@@ -1,19 +1,20 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, unused_local_variable, prefer_function_declarations_over_variables
 
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:thaartransport/Utils/constants.dart';
-import 'package:thaartransport/Utils/controllers.dart';
-import 'package:thaartransport/Utils/firebase.dart';
 
 import 'package:dotted_border/dotted_border.dart';
+import 'package:thaartransport/addtruck/truckcurrentlocation.dart';
+import 'package:thaartransport/addtruck/uploadrc.dart';
 import 'package:thaartransport/addtruck/validations.dart';
+import 'package:thaartransport/modal/usermodal.dart';
+import 'package:thaartransport/screens/homepage.dart';
+
 import 'package:thaartransport/services/userservice.dart';
+import 'package:thaartransport/utils/controllers.dart';
+import 'package:thaartransport/utils/firebase.dart';
 
 class AddTruck extends StatefulWidget {
   const AddTruck({Key? key}) : super(key: key);
@@ -24,11 +25,15 @@ class AddTruck extends StatefulWidget {
 
 class _AddTruckState extends State<AddTruck> {
   bool showDoc = false;
+  bool validate = false;
+  bool loading = false;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   void initState() {
     // getsearchCity().then(updateCurrentCity);
-    currentcity.clear();
+    // currentcity.clear();
   }
 
   var id = truckRef.doc().id.toString();
@@ -72,10 +77,12 @@ class _AddTruckState extends State<AddTruck> {
       child: Column(
         children: [
           TextFormField(
-            initialValue: searchcity.text,
+            initialValue: trucksearchlocation.text,
             onTap: () {
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => CurrentCity()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TruckCurrentLocation()));
             },
             decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -94,7 +101,7 @@ class _AddTruckState extends State<AddTruck> {
             height: height * 0.03,
           ),
           TextFormField(
-              controller: lorry,
+              controller: lorrynumber,
               maxLength: 10,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -108,7 +115,7 @@ class _AddTruckState extends State<AddTruck> {
             height: height * 0.03,
           ),
           TextFormField(
-              controller: capacity,
+              controller: truckcapacity,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "In Tonne(S)",
@@ -172,25 +179,47 @@ class _AddTruckState extends State<AddTruck> {
                       child: const Text("No")),
                   FlatButton(
                       onPressed: () async {
-                        Map<String, dynamic> data = {
-                          'city': searchcity.text.split(',')[0],
-                          'state': searchcity.text.split(',')[1],
-                          'country': searchcity.text.split(',')[2],
-                          'lorrynumber': lorry.text.toUpperCase(),
-                          'capacity': capacity.text,
-                          'ownerid': UserService().currentUid(),
-                          'truckpostid': id,
-                          'usernumber': UserService().currentNumber()
-                        };
-                        await truckRef.doc(id).set(data);
+                        FormState? form = formkey.currentState;
+                        form!.save();
+                        if (!form.validate()) {
+                          validate = true;
+                          showInSnackBar(
+                              "Please fix the error in red before submitting.",
+                              context);
+                        } else {
+                          try {
+                            DocumentSnapshot doc = await usersRef
+                                .doc(firebaseAuth.currentUser!.uid)
+                                .get();
+                            var user = UserModel.fromJson(
+                                doc.data() as Map<String, dynamic>);
+                            var truckref = truckRef.doc();
+                            loading = true;
+                            truckref.set({
+                              "id": truckref.id,
+                              "truckpostid": truckref.id,
+                              "ownerId": user.id,
+                              "dp": user.photourl,
+                              "lorrynumber": lorrynumber.text.toUpperCase(),
+                              "sourcelocation": trucksearchlocation.text,
+                              "capacity": truckcapacity.text,
+                              "usernumber": user.usernumber,
+                            }).catchError((e) {
+                              print(e);
+                            });
 
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => UploadRC(
-                        //               id,
-                        //               lorry.text,
-                        //             )));
+                            loading = false;
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UploadRC(
+                                        lorrynumber.text, truckref.id)));
+                          } catch (e) {
+                            print(e);
+                            loading = false;
+                          }
+                        }
                       },
                       child: const Text("Yes"))
                 ]));
@@ -198,7 +227,12 @@ class _AddTruckState extends State<AddTruck> {
 
   void updateCurrentCity(String searchCity) {
     setState(() {
-      currentcity.text = searchCity;
+      // trucklocation.text = searchCity;
     });
+  }
+
+  void showInSnackBar(String value, context) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
   }
 }

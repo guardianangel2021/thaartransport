@@ -2,8 +2,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:thaartransport/addtruck/addtruck.dart';
 import 'package:thaartransport/modal/usermodal.dart';
-import 'package:thaartransport/screens/myloadpage.dart';
+import 'package:thaartransport/screens/MyLorry.dart';
+import 'package:thaartransport/screens/market/market.dart';
+import 'package:thaartransport/screens/loadview/myloadpage.dart';
 import 'package:thaartransport/screens/profilescreen.dart';
 import 'package:thaartransport/screens/sidebar.dart';
 import 'package:thaartransport/services/userservice.dart';
@@ -23,13 +26,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final tabs = [
-    MyLoadPage(),
-    Text('data2'),
-    Text('data3'),
-    const Text(
-      "R",
-      style: TextStyle(fontSize: 70),
+    MyLoadPage(
+      currentuser: UserService().currentUid(),
     ),
+    MyLorry(),
+    Market(profileId: UserService().currentUid()),
+    Text("data")
   ];
   late Stream<DocumentSnapshot> stream;
 

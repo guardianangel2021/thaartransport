@@ -1,70 +1,52 @@
-// // ignore_for_file: unnecessary_this, prefer_collection_literals, unnecessary_new
+// ignore_for_file: unnecessary_this, prefer_collection_literals, unnecessary_new
 
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// class PostModal {
-//   String? backimage;
-//   String? capacity;
-//   String? location;
+class TruckModal {
+  String? capacity;
+  String? sourcelocation;
+  String? id;
+  String? lorrynumber;
+  String? truckposttime;
+  String? ownerId;
+  String? truckpostid;
+  String? truckloadstatus;
+  String? usernumber;
+  TruckModal({
+    this.capacity,
+    this.sourcelocation,
+    this.id,
+    this.lorrynumber,
+    this.truckposttime,
+    this.ownerId,
+    this.truckpostid,
+    this.truckloadstatus,
+    this.usernumber,
+  });
 
-//   String? fontimage;
+  TruckModal.fromJson(Map<String, dynamic> json) {
+    capacity = json['capacity'];
+    sourcelocation = json['sourcelocation'];
+    id = json['id'];
+    truckloadstatus = json['truckloadstatus'];
+    truckposttime = json['truckposttime'];
+    ownerId = json['ownerId'];
+    truckpostid = json['truckpostid'];
+    usernumber = json['usernumber'];
+  }
 
-//   String? lorrynumber;
-//   String? ownerid;
-//   String? posttime;
-//   String? status;
-//   String? truckpostid;
-//   String? usernumber;
-//   PostModal({
-//     this.backimage,
-//     this.capacity,
-//     this.location,
-//     this.fontimage,
-//     this.lorrynumber,
-//     this.ownerid,
-//     this.posttime,
-//     this.status,
-//     this.truckpostid,
-//     this.usernumber,
-//   });
- 
-
-
-//   PostModal.fromJson(Map<String, dynamic> json) {
-//     backimage = json['backimage'];
-//     capacity = json['capacity'];
-//     sourcelocation = json['sourcelocation'];
-//     expectedprice = json['expectedprice'];
-//     height = json['height'];
-//     postexpiretime = json['postexpiretime'];
-//     length = json['length'];
-//     loadposttime = json['loadposttime'];
-//     material = json['material'];
-//     ownerid = json['ownerid'];
-//     paymentoption = json['paymentoption'];
-//     priceunit = json['priceunit'];
-//     postid = json['postid'];
-//     quantity = json['quantity'];
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final data = Map<String, dynamic>();
-//     data['breadth'] = breadth;
-//     data['destinationlocation'] = destinationlocation;
-//     data['sourcelocation'] = sourcelocation;
-//     data['expectedprice'] = expectedprice;
-//     data['height'] = height;
-//     data['postexpiretime'] = postexpiretime;
-//     data['length'] = length;
-//     data['loadposttime'] = loadposttime;
-//     data['material'] = material;
-//     data['ownerid'] = ownerid;
-//     data['paymentoption'] = paymentoption;
-//     data['priceunit'] = priceunit;
-//     data['postid'] = postid;
-//     data['quantity'] = quantity;
-//     return data;
-//   }
-// }
+  Map<String, dynamic> toJson() {
+    final data = Map<String, dynamic>();
+    data['capacity'] = capacity;
+    data['sourcelocation'] = sourcelocation;
+    data['id'] = id;
+    data['truckloadstatus'] = truckloadstatus;
+    data['truckposttime'] = truckposttime;
+    data['ownerId'] = ownerId;
+    data['truckpostid'] = truckpostid;
+    data['usernumber'] = usernumber;
+    return data;
+  }
+}

@@ -1,11 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/modal/usermodal.dart';
-import 'package:thaartransport/screens/homepage.dart';
 import 'package:thaartransport/screens/kyc/kycverfied.dart';
 import 'package:thaartransport/screens/profile/editprofile.dart';
 import 'package:thaartransport/services/userservice.dart';
+import 'package:thaartransport/utils/constants.dart';
+import 'package:thaartransport/utils/firebase.dart';
 import 'package:thaartransport/widget/cached_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -39,95 +40,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           return Scaffold(
               appBar: appBar(user),
-              body: Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Text(
-                          user.companyname!.toUpperCase(),
-                          style: GoogleFonts.lato(
-                              textStyle: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
-                        ),
-                        SizedBox(
-                          height: height * 0.01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                height: 100,
-                                width: 100,
-                                child: cachedNetworkImage(
-                                  user.photourl!,
-                                )),
-                            SizedBox(
-                              width: width * 0.03,
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 200,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 150,
+                            width: width,
+                            child: Image.asset(
+                              'assets/images/background.jpg',
+                              height: height,
+                              width: width,
+                              fit: BoxFit.cover,
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: height * 0.02,
-                                ),
-                                Text(
-                                  user.username!.toUpperCase(),
-                                  style: GoogleFonts.roboto(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 22),
-                                ),
-                                Text(" " + user.usernumber!.substring(3),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 22)),
-                                SizedBox(
-                                  height: height * 0.02,
-                                ),
-                                Text(
-                                  user.location!.toUpperCase(),
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: height * 0.01,
-                                ),
-                                Text(user.role!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    )),
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
-                        VerifyContainer(),
-                        SizedBox(
-                          height: height * 0.03,
-                        ),
-                        container(),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
+                          ),
+                          Positioned(
+                              bottom: 0,
+                              left: 20,
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Constants.borderColor,
+                                          width: 2),
+                                      borderRadius: BorderRadius.circular(60)),
+                                  child: CircleAvatar(
+                                      backgroundColor: Colors.black26,
+                                      radius: 60,
+                                      child: ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: user.photourl!,
+                                          fit: BoxFit.cover,
+                                          height: height,
+                                          width: width,
+                                        ),
+                                      )))),
+                        ],
+                      ),
                     ),
-                  )));
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(user.username!,
+                              style: GoogleFonts.robotoSlab(fontSize: 22)),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
+                          Text(
+                            user.role!,
+                            style: GoogleFonts.kanit(fontSize: 18),
+                          ),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
+                          Text(
+                            user.location!.toUpperCase(),
+                            style: GoogleFonts.balsamiqSans(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                    VerifyContainer(),
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                    container(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
+              ));
         });
   }
 
-  AppBar appBar(user) {
+  AppBar appBar(UserModel user) {
     return AppBar(
       elevation: 0.0,
-      title: const Text(
-        "My Profile",
-        style: TextStyle(),
+      title: Text(
+        user.companyname!,
+        style: GoogleFonts.oswald(),
       ),
-      centerTitle: true,
+      // centerTitle: true,
       actions: [
         Padding(
             padding: const EdgeInsets.only(right: 15),

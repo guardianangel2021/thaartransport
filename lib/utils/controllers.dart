@@ -17,32 +17,18 @@ var source = TextEditingController();
 //Destination controller
 var destination = TextEditingController();
 
-//paymentDetails controller
-var priceController = TextEditingController();
-
-//ODC Controller
-var lengthController = TextEditingController();
-var breadthController = TextEditingController();
-var heightController = TextEditingController();
-var remarkController = TextEditingController();
-
-// profile city controller
-
-var selectCity = TextEditingController();
-
-//Edit profile controller
-var Editcity = TextEditingController();
-var Editname = TextEditingController();
-var Name = TextEditingController();
-
 //enterProfiledetails controller
 var city = TextEditingController();
 var name = TextEditingController();
 
-//current city controllers
-var searchcity = TextEditingController();
-
 // Add truck controllers
-var currentcity = TextEditingController();
-var lorry = TextEditingController();
-var capacity = TextEditingController();
+var trucksearchlocation = TextEditingController();
+var trucklocation = TextEditingController();
+var lorrynumber = TextEditingController();
+var truckcapacity = TextEditingController();
+
+// market- user posts
+var rateController = TextEditingController();
+var remakrsController = TextEditingController();
+// Bid folder - bidpage controller
+var bidAmountcontroller = TextEditingController();

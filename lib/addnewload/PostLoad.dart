@@ -1,9 +1,10 @@
 // ignore: file_names
-// ignore_for_file: file_names
+// ignore_for_file: file_names, prefer_const_constructors
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,7 @@ import 'package:thaartransport/Utils/constants.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/addnewload/destination.dart';
 import 'package:thaartransport/addnewload/expiretime.dart';
+import 'package:thaartransport/addnewload/orderdata.dart';
 import 'package:thaartransport/addnewload/orderpostconfirmed.dart';
 import 'package:thaartransport/addnewload/post_load_modal.dart';
 import 'package:thaartransport/addnewload/source.dart';
@@ -141,7 +143,8 @@ class _PostLoadState extends State<PostLoad> {
                       "sourcelocation": source.text,
                       "loadposttime": Jiffy(DateTime.now()).yMMMMEEEEdjm,
                       "usernumber": user.usernumber,
-                      "loadstatus": 'Active'
+                      "loadstatus": 'Active',
+                      'loadorderstatus': 'Active',
                     }).catchError((e) {
                       print(e);
                     });
@@ -315,10 +318,13 @@ class _PostLoadState extends State<PostLoad> {
                 TextFormField(
                   controller: quantity,
                   keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    WhitelistingTextInputFormatter.digitsOnly,
+                  ],
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(15),
                       isDense: true,
-                      labelText: "Quanity",
+                      labelText: "Quantity",
                       labelStyle: TextStyle(color: Colors.black),
                       focusedBorder: OutlineInputBorder(
                           borderSide:
@@ -375,6 +381,9 @@ class _PostLoadState extends State<PostLoad> {
                 TextFormField(
                   controller: expectedPrice,
                   keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    WhitelistingTextInputFormatter.digitsOnly,
+                  ],
                   decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(15),
                       isDense: true,

@@ -1,17 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: deprecated_member_use, sized_box_for_whitespace, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lottie/lottie.dart';
-import 'package:pinput/pin_put/pin_put.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thaartransport/Utils/constants.dart';
 import 'package:thaartransport/auth/login_view_modal.dart';
-import 'package:thaartransport/widget/indicatiors.dart';
-
-import 'otp.dart';
 
 class EnterNumber extends StatefulWidget {
   @override
@@ -87,7 +81,10 @@ class _EnterNumberState extends State<EnterNumber> {
                           onChanged: viewModel.onChanged,
                           cursorHeight: 20,
                           cursorColor: Constants.cursorColor,
-                          keyboardType: TextInputType.phone,
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly,
+                          ],
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(

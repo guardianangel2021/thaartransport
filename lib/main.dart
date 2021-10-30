@@ -7,6 +7,7 @@ import 'package:thaartransport/auth/profile_pic.dart';
 import 'package:thaartransport/components/life_cycle_event_handler.dart';
 import 'package:thaartransport/screens/homepage.dart';
 import 'package:thaartransport/screens/splashscreen.dart';
+import 'package:thaartransport/screens/testscreen/testhomepage.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/utils/config.dart';
 import 'package:thaartransport/utils/constants.dart';
