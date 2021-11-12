@@ -15,6 +15,8 @@ class Constants {
   static Color bnbhover = Color(0xff183038);
 
   static Color btnBG = Color(0xff182020);
+  static Color lightbtnBG = Color(0xfff0f0f0);
+  static Color labelcolor = Color(0xff202880);
   static Color floatingbtnBG = Color(0xffc0e4fc);
   static Color btninactive = Color(0xffCCCCCC);
   static Color btntextactive = Color(0xff0D2C40);

@@ -5,6 +5,7 @@ import 'package:thaartransport/auth/login_view_modal.dart';
 import 'package:thaartransport/auth/post_view_modal.dart';
 import 'package:thaartransport/auth/register_view_modal.dart';
 import 'package:thaartransport/screens/profile/editprofileviewmodal.dart';
+import 'package:thaartransport/screens/profile/yearsnotifiers.dart';
 import 'package:thaartransport/utils/constants.dart';
 
 List<SingleChildWidget> providers = [
@@ -14,6 +15,8 @@ List<SingleChildWidget> providers = [
   ChangeNotifierProvider(create: (_) => PostLoadModal()),
 
   ChangeNotifierProvider(create: (_) => EditProfileViewModel()),
+
+  ChangeNotifierProvider(create: (_) => singleNotifier()),
   // ChangeNotifierProvider(create: (_) => ConversationViewModel()),
   // ChangeNotifierProvider(create: (_) => UserViewModel()),
 ];

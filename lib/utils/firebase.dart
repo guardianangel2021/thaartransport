@@ -13,7 +13,7 @@ final Uuid uuid = Uuid();
 CollectionReference usersRef = firestore.collection('thaarusers');
 CollectionReference postRef = firestore.collection("thaarorderdata");
 CollectionReference truckRef = firestore.collection("thaartruckdata");
-
+CollectionReference bidRef = firestore.collection('thaarbidsdata');
 // Storage refs
 Reference profilePic = storage.ref().child('profile');
 Reference order = storage.ref().child('order');

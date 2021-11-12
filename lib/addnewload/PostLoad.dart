@@ -1,25 +1,19 @@
 // ignore: file_names
-// ignore_for_file: file_names, prefer_const_constructors
+// ignore_for_file: file_names, prefer_const_constructors, unused_field
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thaartransport/Utils/constants.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/addnewload/destination.dart';
 import 'package:thaartransport/addnewload/expiretime.dart';
-import 'package:thaartransport/addnewload/orderdata.dart';
 import 'package:thaartransport/addnewload/orderpostconfirmed.dart';
-import 'package:thaartransport/addnewload/post_load_modal.dart';
 import 'package:thaartransport/addnewload/source.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:thaartransport/modal/usermodal.dart';
 import 'package:thaartransport/screens/homepage.dart';
-import 'package:thaartransport/services/uploadload.dart';
 import 'package:thaartransport/utils/controllers.dart';
 
 class PostLoad extends StatefulWidget {
@@ -37,8 +31,8 @@ class _PostLoadState extends State<PostLoad> {
   String _selectedItem = '';
   String group = '';
   void initState() {
-    getSource().then(updateSource);
-    getDes().then(updateDestination);
+    // getSource().then(updateSource);
+    // getDes().then(updateDestination);
     print(multiplyVal.toString());
   }
 
@@ -62,7 +56,11 @@ class _PostLoadState extends State<PostLoad> {
       body: WillPopScope(
           onWillPop: () async {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage(
+                          selectedIndex: 0,
+                        )));
             source.clear();
             destination.clear();
             material.clear();
@@ -137,10 +135,12 @@ class _PostLoadState extends State<PostLoad> {
                       "postexpiretime": expireLoad.text,
                       "paymentmode": paymentMode.text,
                       "quantity": quantity.text,
-                      "destinationlocation": destination.text,
+                      // "destinationlocation": destination.text,
+                      "destinationlocation": controller2.text,
                       "priceunit": priceUnit.text,
                       "material": material.text,
                       "sourcelocation": source.text,
+                      "sourcelocation": controller1.text,
                       "loadposttime": Jiffy(DateTime.now()).yMMMMEEEEdjm,
                       "usernumber": user.usernumber,
                       "loadstatus": 'Active',
@@ -218,15 +218,16 @@ class _PostLoadState extends State<PostLoad> {
               children: [
                 TextFormField(
                   textInputAction: TextInputAction.next,
-                  initialValue: source.text.toString(),
-                  // controller: controller1,
-                  readOnly: true,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SourceLocation()));
-                  },
+                  // initialValue: source.text.toString(),
+
+                  controller: controller1,
+                  readOnly: false,
+                  // onTap: () {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => SourceLocation()));
+                  // },
 
                   cursorColor: Constants.cursorColor,
                   decoration: InputDecoration(
@@ -256,13 +257,13 @@ class _PostLoadState extends State<PostLoad> {
                 ),
                 TextFormField(
                   textInputAction: TextInputAction.next,
-                  initialValue: destination.text.toString(),
-                  // controller: controller2,
-                  readOnly: true,
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Destination()));
-                  },
+                  // initialValue: destination.text.toString(),
+                  controller: controller2,
+                  readOnly: false,
+                  // onTap: () {
+                  //   Navigator.push(context,
+                  //       MaterialPageRoute(builder: (context) => Destination()));
+                  // },
 
                   cursorColor: Constants.cursorColor,
                   decoration: InputDecoration(
@@ -691,11 +692,15 @@ class _PostLoadState extends State<PostLoad> {
               color: Constants.btnBG,
               textColor: Constants.white,
               onPressed: () {
-                Navigator.pop(context);
-                if (val == "Advance pay") {
-                  paymentMode.text = advancePay.text + "% " + val.toString();
+                if (val == "Advance pay" && advancePay.text.isEmpty) {
+                  Fluttertoast.showToast(
+                      msg: "Advance pay should not be blank");
+                } else if (val == "Advance pay" && advancePay.text.isNotEmpty) {
+                  paymentMode.text = "${advancePay.text}% " + val.toString();
+                  Navigator.pop(context);
                 } else {
                   paymentMode.text = val.toString();
+                  Navigator.pop(context);
                 }
               },
               child: Container(
@@ -713,18 +718,18 @@ class _PostLoadState extends State<PostLoad> {
   // for paymentoption
 
   // To get the source Address
-  void updateSource(String name1) {
-    setState(() {
-      controller1.text = name1;
-    });
-  }
+  // void updateSource(String name1) {
+  //   setState(() {
+  //     controller1.text = name1;
+  //   });
+  // }
 
 // To get the Destination Address
-  void updateDestination(String des) {
-    setState(() {
-      controller2.text = des;
-    });
-  }
+  // void updateDestination(String des) {
+  //   setState(() {
+  //     controller2.text = des;
+  //   });
+  // }
 
   void showInSnackBar(String value, context) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();

@@ -11,6 +11,7 @@ class ProfilePicture extends StatefulWidget {
 }
 
 class _ProfilePictureState extends State<ProfilePicture> {
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     PostsViewModel viewModel = Provider.of<PostsViewModel>(context);
@@ -69,20 +70,21 @@ class _ProfilePictureState extends State<ProfilePicture> {
             SizedBox(height: 10.0),
             Center(
               child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Theme.of(context).accentColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).colorScheme.secondary),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
                     ),
                   ),
-                ),
-                child: Center(
-                  child: Text('done'.toUpperCase()),
-                ),
-                onPressed: () => viewModel.uploadProfilePicture(context),
-              ),
+                  child: Center(
+                    child: Text('done'.toUpperCase()),
+                  ),
+                  onPressed: () async {
+                    viewModel.uploadProfilePicture(context);
+                  }),
             ),
           ],
         ),
@@ -107,15 +109,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Text(
                   'Select'.toUpperCase(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Camera'),
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
                   viewModel.pickImage(camera: true, context: context);

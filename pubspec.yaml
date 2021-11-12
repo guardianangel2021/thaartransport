@@ -58,6 +58,7 @@ dependencies:
   expansion_tile_card: ^2.0.0
   timeline_tile: ^2.0.0
   cool_alert: ^1.1.0
+  dotted_decoration: ^2.0.0
   flutter_switch: ^0.3.2
   dotted_border: ^2.0.0+1
   jiffy: ^4.1.0
@@ -70,6 +71,9 @@ dependencies:
   google_maps_webservice: ^0.0.19
   flutter_dotenv: ^5.0.2
   google_place: ^0.4.3
+  flutter_scroll_to_top: ^1.1.0
+  filter_list: ^1.0.0
+  
   # data_connection_checker: ^0.3.4
   # animations: ^2.0.2
 

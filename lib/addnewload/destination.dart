@@ -1,16 +1,14 @@
 // ignore: file_names
-// ignore_for_file: file_names, prefer_typing_uninitialized_variables
+// ignore_for_file: file_names, prefer_typing_uninitialized_variables, prefer_const_constructors, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:thaartransport/Test/textfield.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/Utils/googleservice.dart';
 import 'package:thaartransport/utils/controllers.dart';
-import 'package:uuid/uuid.dart';
 
 import 'PostLoad.dart';
 

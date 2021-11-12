@@ -80,8 +80,12 @@ class _UserTypeState extends State<UserType> {
                 Map<String, dynamic> data = {'role': title.toString()};
 
                 await usersRef.doc(UserService().currentUid()).update(data);
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                              selectedIndex: 0,
+                            )));
               },
               child: Container(
                 width: double.infinity,

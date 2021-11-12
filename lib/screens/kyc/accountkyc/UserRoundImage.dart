@@ -1,0 +1,173 @@
+// ignore_for_file: file_names
+
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'package:thaartransport/Utils/firebase.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:thaartransport/screens/kyc/accountkyc/round_image.dart';
+import 'package:thaartransport/utils/constants.dart';
+
+class UserRoundImage extends StatefulWidget {
+  final Function(String imageUrl) onFileChanged;
+  UserRoundImage({required this.onFileChanged});
+
+  @override
+  _UserRoundImageState createState() => _UserRoundImageState();
+}
+
+class _UserRoundImageState extends State<UserRoundImage> {
+  final ImagePicker _picker = ImagePicker();
+  String? imageUrl;
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.orange, width: 3),
+                    borderRadius: BorderRadius.circular(100)),
+                child: CircleAvatar(
+                    radius: 90,
+                    child: ClipOval(
+                      child: imageUrl != null
+                          ? AppRoundImage.url(
+                              imageUrl!,
+                              height: height,
+                              width: width,
+                            )
+                          : null,
+                    ))),
+            Positioned(
+                // top: 80,
+                bottom: 0,
+                right: 10,
+                child: InkWell(
+                    onTap: () => _selectPhoto(),
+                    child: CircleAvatar(
+                        backgroundColor: Colors.blue[800],
+                        child: const Center(
+                            child: Icon(
+                          Icons.camera_alt_rounded,
+                        )))))
+          ],
+        ),
+
+        // if (imageUrl != null)
+        //   InkWell(
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //     onTap: () => _selectPhoto(),
+        //     child: AppRoundImage.url(imageUrl!, width: 80, height: 80),
+        //   ),
+        // InkWell(
+        //   onTap: () => _selectPhoto(),
+        //   child: Padding(
+        //     padding: EdgeInsets.all(8),
+        //     child: Text(
+        //       imageUrl != null ? 'Change photo' : 'select photo',
+        //       style:
+        //           TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+        //     ),
+        //   ),
+        // )
+      ],
+    );
+  }
+
+  Future _selectPhoto() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) => BottomSheet(
+            onClosing: () {},
+            builder: (context) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.camera),
+                      title: Text("Camera"),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _pickImage(ImageSource.camera);
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.filter),
+                      title: Text("Pick a files"),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _pickImage(ImageSource.gallery);
+                      },
+                    )
+                  ],
+                )));
+  }
+
+  Future _pickImage(ImageSource source) async {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 50);
+    if (pickedFile == null) {
+      return;
+    }
+    var file = await ImageCropper.cropImage(
+      sourcePath: pickedFile.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9,
+      ],
+      androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'Crop Image',
+        toolbarColor: Constants.lightAccent,
+        toolbarWidgetColor: Colors.white,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: true,
+      ),
+      // aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1)
+    );
+    if (file == null) {
+      return;
+    }
+    file = await compressImage(file.path, 35);
+    await _uploadFile(file.path);
+    // await _UploadImageFirestore();
+  }
+
+  Future<File> compressImage(String path, int quality) async {
+    final newPath = p.join((await getTemporaryDirectory()).path,
+        '${DateTime.now()}.${p.extension(path)}');
+
+    final result = await FlutterImageCompress.compressAndGetFile(path, newPath,
+        quality: quality);
+    return result!;
+  }
+
+  Future _uploadFile(String path) async {
+    final ref = FirebaseStorage.instance.ref().child('userselfi').child(
+        '${DateTime.now().toIso8601String() + user!.phoneNumber.toString() + p.basename(path)}');
+
+    final result = await ref.putFile(File(path));
+    final fileUrl = await result.ref.getDownloadURL();
+
+    setState(() {
+      imageUrl = fileUrl;
+    });
+    widget.onFileChanged(fileUrl);
+  }
+}

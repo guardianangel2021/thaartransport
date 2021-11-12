@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -88,7 +89,15 @@ class _EditProfileState extends State<EditProfile> {
                           padding: const EdgeInsets.all(1.0),
                           child: CircleAvatar(
                             radius: 65.0,
-                            backgroundImage: NetworkImage(viewModel.imgLink!),
+                            // backgroundImage: NetworkImage(viewModel.imgLink!),
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: viewModel.imgLink!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ),
                           ),
                         )
                       : viewModel.image == null
@@ -96,8 +105,14 @@ class _EditProfileState extends State<EditProfile> {
                               padding: const EdgeInsets.all(1.0),
                               child: CircleAvatar(
                                 radius: 65.0,
-                                backgroundImage:
-                                    NetworkImage(widget.user.photourl!),
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: widget.user.photourl!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
                               ),
                             )
                           : Padding(

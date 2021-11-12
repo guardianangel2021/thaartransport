@@ -134,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+1"
+  dotted_decoration:
+    dependency: "direct main"
+    description:
+      name: dotted_decoration
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   dropdown_search:
     dependency: "direct main"
     description:
@@ -169,6 +176,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
+  filter_list:
+    dependency: "direct main"
+    description:
+      name: filter_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -300,6 +314,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
+  flutter_scroll_to_top:
+    dependency: "direct main"
+    description:
+      name: flutter_scroll_to_top
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_spinkit:
     dependency: "direct main"
     description:
@@ -400,7 +421,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.4+3"
+    version: "0.8.4+4"
   image_picker_for_web:
     dependency: transitive
     description:

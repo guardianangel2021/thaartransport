@@ -6,6 +6,7 @@ import 'package:thaartransport/Utils/constants.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/widget/fabbutton.dart';
+import 'package:thaartransport/widget/indicatiors.dart';
 
 class MyLorry extends StatefulWidget {
   const MyLorry({Key? key}) : super(key: key);
@@ -53,7 +54,7 @@ class _MyLorryState extends State<MyLorry> {
               if (snapshot.hasError) {
                 return const Scaffold(body: Text("Somthing went Wrong"));
               } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(body: Center(child: Text("Loading...")));
+                return Center(child: circularProgress(context));
               } else if (snapshot.data!.docs.isEmpty) {
                 return Container(
                     alignment: Alignment.center,

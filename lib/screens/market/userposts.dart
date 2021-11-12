@@ -1,4 +1,4 @@
-// ignore_for_file: unrelated_type_equality_checks
+// ignore_for_file: unrelated_type_equality_checks, prefer_const_constructors
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,28 +6,25 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 
 import 'package:jiffy/jiffy.dart';
-import 'package:thaartransport/addnewload/PostLoad.dart';
-import 'package:thaartransport/addnewload/orderdata.dart';
 import 'package:thaartransport/addnewload/postmodal.dart';
 import 'package:thaartransport/modal/usermodal.dart';
-import 'package:thaartransport/screens/bid/bidpage.dart';
+import 'package:thaartransport/screens/homepage.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/utils/constants.dart';
 import 'package:thaartransport/utils/controllers.dart';
 import 'package:thaartransport/utils/firebase.dart';
 import 'package:thaartransport/widget/cached_image.dart';
+import 'package:thaartransport/widget/indicatiors.dart';
 //import 'package:flutter_icons/flutter_icons.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class UserPost extends StatelessWidget {
   final PostModal posts;
+  final UserModel users;
 
-  UserPost({
-    required this.posts,
-  });
+  UserPost({required this.posts, required this.users});
   final DateTime timestamp = DateTime.now();
 
   currentUserId() {
@@ -37,6 +34,7 @@ class UserPost extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   bool validate = false;
   bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return LoadPosts(
@@ -50,53 +48,6 @@ class UserPost extends StatelessWidget {
         posts.expectedprice!,
         posts,
         posts.priceunit!);
-  }
-
-  buildUser(BuildContext context, UserModel user) {
-    bool isMe = UserService().currentUid == posts.ownerId;
-    var ref = posts.ownerId;
-    print(ref);
-    return StreamBuilder<DocumentSnapshot>(
-        stream: usersRef.doc(posts.ownerId).snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Text("Somthing went Wrong");
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: Text("Loading..."));
-          }
-          UserModel users =
-              UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-          return Visibility(
-              visible: !isMe,
-              child: Card(
-                  elevation: 0,
-                  color: Colors.grey[100],
-                  child: ListTile(
-                    title: Text(users.username!),
-                    subtitle: Text(users.companyname!),
-                    leading: users.photourl!.isNotEmpty
-                        ? CircleAvatar(
-                            radius: 20,
-                            backgroundColor: const Color(0xff4D4D4D),
-                            backgroundImage: CachedNetworkImageProvider(
-                                users.photourl ?? ""),
-                          )
-                        : const CircleAvatar(
-                            radius: 20.0,
-                            backgroundColor: Color(0xff4D4D4D),
-                          ),
-                    trailing: FlatButton(
-                      color: Colors.black,
-                      onPressed: () {
-                        bidSheet(context, posts, users);
-                      },
-                      child: Text(
-                        "BID",
-                        style: TextStyle(color: Constants.white, fontSize: 18),
-                      ),
-                    ),
-                  )));
-        });
   }
 
   Widget LoadPosts(
@@ -114,217 +65,282 @@ class UserPost extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return StreamBuilder(
-        stream: usersRef.doc(posts.ownerId).snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        //  stream: usersRef.doc(widget.posts.ownerId).snapshots(),
+        stream: bidRef
+            .where('biduserid', isEqualTo: UserService().currentUid())
+            .where('loadid', isEqualTo: posts.id)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Text("Somthing went Wrong");
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: Text("Loading..."));
-          }
-          UserModel users =
-              UserModel.fromJson(snapshot.data!.data() as Map<String, dynamic>);
-          bool isMe = UserService().currentUid == posts.ownerId;
-          // bool isStatus = posts.loadstatus as bool;
-          return InkWell(
-            onTap: () {
-              posts.loadorderstatus == "Loadinprogress" &&
-                      posts.biduserid == currentUserId()
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BidPage(
-                                posts: posts,
-                                users: users,
-                              )))
-                  : bidSheet(context, posts, users);
-            },
-            child: Card(
-                // color: Colors.red,
+            return Center();
+          } else if (snapshot.hasData) {
+            List<QueryDocumentSnapshot> docs = snapshot.data?.docs ?? [];
+            return InkWell(
+              onTap: () {
+                docs.isEmpty
+                    ? bidSheet(context, posts, users)
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePage(selectedIndex: 3)));
+              },
+              child: Card(
+                  // color: Colors.red,
 
-                elevation: 8,
-                child: Column(
-                  children: [
-                    Container(
-                      // height: 20,
-                      padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Container(
-                              //   width: 80,
-                              //   height: 22,
-                              //   alignment: Alignment.center,
-                              //   decoration: BoxDecoration(
-                              //       border: Border.all(),
-                              //       borderRadius: BorderRadius.circular(25)),
-                              //   child: Text(
-                              //     status.toUpperCase(),
-                              //     style: TextStyle(
-                              //       fontStyle: FontStyle.italic,
-                              //       fontWeight: FontWeight.bold,
-                              //       color: status == "Active"
-                              //           ? Constants.cursorColor
-                              //           : Constants.alert,
-                              //     ),
-                              //   ),
-                              // ),
-                              Text(postTime.split(',')[1] +
-                                  postTime.split(',')[2])
-                            ],
-                          ),
-                          SizedBox(height: height * 0.02),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    source.split(',')[0],
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  Text(source.split(',')[1]),
-                                ],
-                              ),
-                              const Icon(Icons.arrow_right_alt_outlined),
-                              Column(
-                                children: [
-                                  Text(
-                                    destination.split(',')[0],
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  Text(destination.split(',')[1]),
-                                ],
-                              )
-                            ],
-                          ),
-                          Divider(),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                  elevation: 8,
+                  child: Column(
+                    children: [
+                      Container(
+                        // height: 20,
+                        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(postTime.split(',')[1] +
+                                    postTime.split(',')[2])
+                              ],
+                            ),
+                            SizedBox(height: height * 0.02),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
                                   children: [
-                                    Image.asset(
-                                      'assets/images/product.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.05,
-                                    ),
                                     Text(
-                                      material,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )
+                                      source.split(',')[0],
+                                      style: GoogleFonts.lato(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    Text(source.split(',')[1]),
                                   ],
                                 ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                const Icon(Icons.arrow_right_alt_outlined),
+                                Column(
                                   children: [
-                                    Image.asset(
-                                      'assets/images/quantity.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.05,
-                                    ),
                                     Text(
-                                      "$quantity Tons",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )
+                                      destination.split(',')[0],
+                                      style: GoogleFonts.lato(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16),
+                                    ),
+                                    Text(destination.split(',')[1]),
                                   ],
-                                ),
-                              )
-                            ],
-                          ),
-                          Divider(),
-                          SizedBox(
-                            height: height * 0.01,
-                          ),
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/images/rupee-indian.png',
-                                height: 20,
-                                width: 20,
-                              ),
-                              Text(expectedPrice,
-                                  style: GoogleFonts.lato(fontSize: 18)),
-                              Text(priceunit == 'tonne' ? " per" : '',
-                                  style: const TextStyle(fontSize: 18)),
-                              SizedBox(
-                                width: width * 0.02,
-                              ),
-                              Text(priceunit,
-                                  style: GoogleFonts.lato(fontSize: 18)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: height * 0.01),
-                    Visibility(
-                        visible: !isMe,
-                        child: Card(
-                            elevation: 0,
-                            color: Colors.grey[100],
-                            child: ListTile(
-                                title: Text(users.username!),
-                                subtitle: Text(users.companyname!),
-                                leading: users.photourl!.isNotEmpty
-                                    ? CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor:
-                                            const Color(0xff4D4D4D),
-                                        backgroundImage:
-                                            CachedNetworkImageProvider(
-                                                users.photourl ?? ""),
-                                      )
-                                    : const CircleAvatar(
-                                        radius: 20.0,
-                                        backgroundColor: Color(0xff4D4D4D),
+                                )
+                              ],
+                            ),
+                            Divider(),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/product.png',
+                                        height: 20,
+                                        width: 20,
                                       ),
-                                trailing:
-                                    posts.loadorderstatus == "Loadinprogress" &&
-                                            posts.biduserid == currentUserId()
-                                        ? FlatButton(
-                                            color: Colors.orange,
-                                            onPressed: () {},
-                                            child: Text(
-                                              "Waiting",
-                                              style: TextStyle(
-                                                  color: Constants.white,
-                                                  fontSize: 18),
-                                            ))
-                                        : FlatButton(
-                                            color: Colors.black,
-                                            onPressed: () {
-                                              bidSheet(context, posts, users);
-                                            },
-                                            child: Text(
-                                              "BID",
-                                              style: TextStyle(
-                                                  color: Constants.white,
-                                                  fontSize: 18),
+                                      SizedBox(
+                                        width: width * 0.05,
+                                      ),
+                                      Text(
+                                        material,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/quantity.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.05,
+                                      ),
+                                      Text(
+                                        "$quantity Tons",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            Divider(),
+                            SizedBox(
+                              height: height * 0.01,
+                            ),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  'assets/images/rupee-indian.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                Text(expectedPrice,
+                                    style: GoogleFonts.lato(fontSize: 18)),
+                                Text(priceunit == 'tonne' ? " per" : '',
+                                    style: const TextStyle(fontSize: 18)),
+                                SizedBox(
+                                  width: width * 0.02,
+                                ),
+                                Text(priceunit,
+                                    style: GoogleFonts.lato(fontSize: 18)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Card(
+                              elevation: 0,
+                              child: Container(
+                                  width: width,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                          child: Container(
+                                        child: Row(
+                                          children: [
+                                            users.photourl!.isNotEmpty
+                                                ? CircleAvatar(
+                                                    radius: 20,
+                                                    backgroundColor:
+                                                        const Color(0xff4D4D4D),
+                                                    backgroundImage:
+                                                        CachedNetworkImageProvider(
+                                                            users.photourl ??
+                                                                ""),
+                                                  )
+                                                : const CircleAvatar(
+                                                    radius: 20.0,
+                                                    backgroundColor:
+                                                        Color(0xff4D4D4D),
+                                                  ),
+                                            SizedBox(
+                                              width: 10,
                                             ),
-                                          ))))
-                  ],
-                )),
-          );
+                                            Flexible(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(users.username!),
+                                                Text(users.companyname!)
+                                              ],
+                                            )),
+                                          ],
+                                        ),
+                                      )),
+                                      Flexible(
+                                          child: Container(
+                                        child: docs.isEmpty
+                                            ? FlatButton(
+                                                color: Colors.black,
+                                                onPressed: () {
+                                                  bidSheet(
+                                                      context, posts, users);
+                                                },
+                                                child: Container(
+                                                    width: 120,
+                                                    alignment: Alignment.center,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: const [
+                                                        Icon(
+                                                          Icons.call,
+                                                          color: Colors.white,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          "Bid",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20),
+                                                        )
+                                                      ],
+                                                    )))
+                                            : FlatButton(
+                                                color: Colors.orange,
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              HomePage(
+                                                                  selectedIndex:
+                                                                      3)));
+                                                },
+                                                child: Container(
+                                                    width: 120,
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      "Waiting",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20),
+                                                    ))),
+                                      ))
+                                    ],
+                                  ))))
+                    ],
+                  )),
+            );
+          } else {
+            return circularProgress(context);
+          }
         });
   }
+
+  // buildBidsButton() {
+  //   return StreamBuilder<QuerySnapshot>(
+  //       stream: bidRef
+  //           .where('biduserid', isEqualTo: UserService().currentUid())
+  //           .where('loadid', isEqualTo: posts.id)
+  //           .snapshots(),
+  //       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //         if (snapshot.hasData) {}
+  //         // var isMe = snapshot.data!.docs.length;
+  //         List<QueryDocumentSnapshot> docs = snapshot.data?.docs ?? [];
+  //         return docs.isEmpty
+  //             ? FlatButton(
+  //                 color: Colors.black,
+  //                 onPressed: () {},
+  //                 child: Text(
+  //                   "Bid",
+  //                   style: TextStyle(color: Colors.white),
+  //                 ))
+  //             : FlatButton(
+  //                 color: Colors.orange,
+  //                 onPressed: () {},
+  //                 child: Text(
+  //                   "waiting",
+  //                   style: TextStyle(color: Colors.white),
+  //                 ));
+  //       });
+  // }
 
   ////Bid
   bidSheet(BuildContext context, PostModal post, UserModel user) {
@@ -385,15 +401,17 @@ class UserPost extends StatelessWidget {
                       title: Wrap(
                         children: [
                           Text(
-                            posts.sourcelocation!.split(',')[0] +
-                                posts.sourcelocation!.split(',')[1],
+                            posts.sourcelocation!,
+                            // posts.sourcelocation!.split(',')[0] +
+                            //     posts.sourcelocation!.split(',')[1],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(' - '),
                           Text(
-                            posts.destinationlocation!.split(',')[0] +
-                                posts.destinationlocation!.split(',')[1],
+                            posts.destinationlocation!,
+                            // posts.destinationlocation!.split(',')[0] +
+                            //     posts.destinationlocation!.split(',')[1],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -480,20 +498,17 @@ class UserPost extends StatelessWidget {
                           } else {
                             try {
                               loading = true;
-
-                              await postRef
-                                  .doc(posts.id)
-                                  .collection('Bid')
-                                  .doc(UserService().currentUid())
-                                  .set({
+                              var id = bidRef.doc().id;
+                              await bidRef.doc(id).set({
                                 'rate': rateController.text,
                                 'remarks': remakrsController.text,
                                 'bidtime': Jiffy(DateTime.now()).yMMMMEEEEdjm,
                                 'biduserid': UserService().currentUid(),
-                                'bidresponse': ""
-                                // 'biduserlocation': users.location,
-                                // 'biduserdp': users.photourl,
-                                // 'bidusername': users.username.toString()
+                                'bidresponse': "",
+                                'loadid': posts.postid,
+                                'negotiateprice': "",
+                                'btnvalue': "",
+                                'id': id
                               }).catchError((e) {
                                 print(e);
                               });
@@ -517,10 +532,8 @@ class UserPost extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => BidPage(
-                                            posts: posts,
-                                            users: users,
-                                          )));
+                                      builder: (context) =>
+                                          HomePage(selectedIndex: 3)));
                             } catch (e) {
                               print(e);
                               loading = false;

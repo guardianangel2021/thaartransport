@@ -8,7 +8,7 @@ import 'package:thaartransport/Utils/constants.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:thaartransport/addtruck/truckcurrentlocation.dart';
 import 'package:thaartransport/addtruck/uploadrc.dart';
-import 'package:thaartransport/addtruck/validations.dart';
+import 'package:thaartransport/utils/validations.dart';
 import 'package:thaartransport/modal/usermodal.dart';
 import 'package:thaartransport/screens/homepage.dart';
 
@@ -28,6 +28,7 @@ class _AddTruckState extends State<AddTruck> {
   bool validate = false;
   bool loading = false;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  TextEditingController controller1 = TextEditingController();
 
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -77,13 +78,14 @@ class _AddTruckState extends State<AddTruck> {
       child: Column(
         children: [
           TextFormField(
-            initialValue: trucksearchlocation.text,
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TruckCurrentLocation()));
-            },
+            // initialValue: trucksearchlocation.text,
+            controller: controller1,
+            // onTap: () {
+            //   Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => TruckCurrentLocation()));
+            // },
             decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Current City',
@@ -201,7 +203,8 @@ class _AddTruckState extends State<AddTruck> {
                               "ownerId": user.id,
                               "dp": user.photourl,
                               "lorrynumber": lorrynumber.text.toUpperCase(),
-                              "sourcelocation": trucksearchlocation.text,
+                              // "sourcelocation": trucksearchlocation.text,
+                              "sourcelocation": controller1.text,
                               "capacity": truckcapacity.text,
                               "usernumber": user.usernumber,
                             }).catchError((e) {

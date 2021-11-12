@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:thaartransport/modal/usermodal.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/utils/constants.dart';
+import 'package:thaartransport/widget/indicatiors.dart';
 
 class EditProfileViewModel extends ChangeNotifier {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -100,9 +101,13 @@ class EditProfileViewModel extends ChangeNotifier {
     try {
       PickedFile? pickedFile = await picker.getImage(
         source: camera ? ImageSource.camera : ImageSource.gallery,
+        imageQuality: 85,
+        // source: camera ? ImageSource.camera : ImageSource.gallery,
       );
+
       File? croppedFile = await ImageCropper.cropImage(
         sourcePath: pickedFile!.path,
+        // compressFormat: ImageCompressFormat.jpg,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,

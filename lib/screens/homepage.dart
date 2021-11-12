@@ -5,19 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:thaartransport/addtruck/addtruck.dart';
 import 'package:thaartransport/modal/usermodal.dart';
 import 'package:thaartransport/screens/MyLorry.dart';
+import 'package:thaartransport/screens/myorders/mybidorder.dart';
 import 'package:thaartransport/screens/market/market.dart';
 import 'package:thaartransport/screens/loadview/myloadpage.dart';
-import 'package:thaartransport/screens/profilescreen.dart';
+import 'package:thaartransport/screens/profile/profilescreen.dart';
 import 'package:thaartransport/screens/sidebar.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/utils/constants.dart';
 import 'package:thaartransport/utils/firebase.dart';
+import 'package:thaartransport/widget/indicatiors.dart';
 import 'package:thaartransport/widget/cached_image.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  final int selectedIndex;
+  HomePage({required this.selectedIndex});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -31,11 +34,12 @@ class _HomePageState extends State<HomePage> {
     ),
     MyLorry(),
     Market(profileId: UserService().currentUid()),
-    Text("data")
+    MyBidOrder()
   ];
   late Stream<DocumentSnapshot> stream;
 
   void initState() {
+    _selectedIndex = widget.selectedIndex;
     stream = usersRef.doc(UserService().currentUid()).snapshots();
   }
 
@@ -47,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasError) {
             return const Scaffold(body: Text("Somthing went Wrong"));
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(body: Center(child: Text("Loading...")));
+            return Scaffold(body: Center(child: circularProgress(context)));
           }
 
           UserModel user =
@@ -70,10 +74,15 @@ class _HomePageState extends State<HomePage> {
                         height: 20,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15)),
-                        child: Image.network(
-                          user.photourl!,
-                          fit: BoxFit.cover,
-                        ))),
+                        child: user.photourl == ""
+                            ? Icon(
+                                Icons.people_alt,
+                                color: Colors.grey,
+                                size: 30,
+                              )
+                            : cachedNetworkImage(
+                                user.photourl!,
+                              ))),
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -159,8 +168,8 @@ class _HomePageState extends State<HomePage> {
                           text: 'Market',
                         ),
                         GButton(
-                          icon: LineIcons.user,
-                          text: 'Netwok',
+                          icon: LineIcons.productHunt,
+                          text: 'My Orders',
                         ),
                       ],
                       selectedIndex: _selectedIndex,

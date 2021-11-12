@@ -1,7 +1,6 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
-import 'package:thaartransport/screens/kyc/vierficationkyc.dart';
 import 'package:thaartransport/utils/constants.dart';
 
 class AddressProof extends StatefulWidget {
@@ -19,7 +18,7 @@ class _AddressProofState extends State<AddressProof> {
 
   AppBar appBar() {
     return AppBar(
-      title: Text("Boss account KYC"),
+      title: Text("Thaar account KYC"),
     );
   }
 

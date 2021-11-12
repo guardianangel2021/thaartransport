@@ -1,17 +1,18 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+
 import 'package:thaartransport/Utils/constants.dart';
 import 'package:thaartransport/Utils/firebase.dart';
 import 'package:thaartransport/auth/register_view_modal.dart';
 import 'package:thaartransport/services/userservice.dart';
+import 'package:thaartransport/utils/firebase.dart';
 
 class UserRegistration extends StatefulWidget {
   const UserRegistration({Key? key}) : super(key: key);
@@ -26,8 +27,6 @@ class _UserRegistrationState extends State<UserRegistration> {
   final _city = TextEditingController();
   final _name = TextEditingController();
   final _companyName = TextEditingController();
-  String select = 'Shipper';
-  late String? title;
   @override
   Widget build(BuildContext context) {
     RegisterViewModel registerViewModel =
@@ -125,18 +124,19 @@ class _UserRegistrationState extends State<UserRegistration> {
                     SizedBox(
                       height: height * 0.03,
                     ),
-                    container(
-                        "Shipper",
-                        "I transport goods and I am looking for trucks",
-                        'assets/images/logo.png'),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    container("Truck Owner", "I have trucks for transportation",
-                        'assets/images/logo.png'),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    buildDropdown()
+                    // container(
+                    //     "Shipper",
+                    //     "I transport goods and I am looking for trucks",
+                    //     'assets/images/logo.png'),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    // container("Truck Owner", "I have trucks for transportation",
+                    //     'assets/images/logo.png'),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
                   ],
                 ),
               ),
@@ -159,86 +159,120 @@ class _UserRegistrationState extends State<UserRegistration> {
                   ),
                 )),
             onPressed: () async {
-              registerViewModel.setrole(title);
+              // registerViewModel.setrole(title);
               registerViewModel.register(context);
             },
           )),
     );
   }
 
-  Widget container(String title, String status, String img) {
-    return InkWell(
-        onTap: () {
-          selectDate(title);
-          this.title = title;
-        },
-        child: Container(
-            height: 100,
-            decoration: BoxDecoration(
-                color: switchColor(title),
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.grey,
-                      spreadRadius: 1,
-                      offset: Offset(6, 8),
-                      blurRadius: 7)
-                ],
-                borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 250,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(title,
-                              style:
-                                  TextStyle(color: switchContentColor(title))),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            status,
-                            style: TextStyle(color: switchContentColor(title)),
-                          )
-                        ],
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage(img),
-                    )
-                  ],
-                ),
-              ],
-            )));
+  Widget buildDropdown() {
+    RegisterViewModel registerViewModel =
+        Provider.of<RegisterViewModel>(context, listen: false);
+
+    return DropdownSearch<String>(
+      mode: Mode.BOTTOM_SHEET,
+      showSelectedItems: true,
+      maxHeight: 200,
+
+      popupTitle: const Text(
+        "Please select your Role",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+      items: const ["Shipper", "Truck Owner", 'Shipper & Truck Owner'],
+      hint: "select the role",
+      label: 'Role',
+      autoValidateMode: AutovalidateMode.onUserInteraction,
+      popupItemDisabled: (String s) => s.startsWith('I'),
+      onChanged: (val) {
+        registerViewModel.setrole(val);
+      },
+      onSaved: (val) {
+        registerViewModel.setrole(val);
+      },
+      validator: (value) {
+        if (value == null) {
+          return "Required field";
+        } else
+          return null;
+      },
+      // selectedItem: widget.user.role
+    );
   }
 
-  Color switchColor(title) {
-    if (title == select) {
-      return Colors.blue.withOpacity(0.8);
-    } else {
-      return Colors.white.withOpacity(0.2);
-    }
-  }
+  // Widget container(String title, String status, String img) {
+  //   return InkWell(
+  //       onTap: () {
+  //         selectDate(title);
+  //         this.title = title;
+  //       },
+  //       child: Container(
+  //           height: 100,
+  //           decoration: BoxDecoration(
+  //               color: switchColor(title),
+  //               boxShadow: const [
+  //                 BoxShadow(
+  //                     color: Colors.grey,
+  //                     spreadRadius: 1,
+  //                     offset: Offset(6, 8),
+  //                     blurRadius: 7)
+  //               ],
+  //               borderRadius: BorderRadius.circular(10)),
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Row(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   Container(
+  //                     width: 250,
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(title,
+  //                             style:
+  //                                 TextStyle(color: switchContentColor(title))),
+  //                         const SizedBox(
+  //                           height: 10,
+  //                         ),
+  //                         Text(
+  //                           status,
+  //                           style: TextStyle(color: switchContentColor(title)),
+  //                         )
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   CircleAvatar(
+  //                     radius: 30,
+  //                     backgroundImage: AssetImage(img),
+  //                   )
+  //                 ],
+  //               ),
+  //             ],
+  //           )));
+  // }
 
-  Color switchContentColor(title) {
-    if (title == select) {
-      return Colors.white;
-    } else {
-      return Colors.black;
-    }
-  }
+  // Color switchColor(title) {
+  //   if (title == select) {
+  //     return Colors.blue.withOpacity(0.8);
+  //   } else {
+  //     return Colors.white.withOpacity(0.2);
+  //   }
+  // }
 
-  selectDate(date) {
-    setState(() {
-      select = date;
-    });
-  }
+  // Color switchContentColor(title) {
+  //   if (title == select) {
+  //     return Colors.white;
+  //   } else {
+  //     return Colors.black;
+  //   }
+  // }
+
+  // selectDate(date) {
+  //   setState(() {
+  //     select = date;
+  //   });
+  // }
 }

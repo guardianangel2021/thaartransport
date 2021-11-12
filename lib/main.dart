@@ -2,12 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:thaartransport/auth/login.dart';
-import 'package:thaartransport/auth/profile_pic.dart';
+
 import 'package:thaartransport/components/life_cycle_event_handler.dart';
 import 'package:thaartransport/screens/homepage.dart';
 import 'package:thaartransport/screens/splashscreen.dart';
-import 'package:thaartransport/screens/testscreen/testhomepage.dart';
 import 'package:thaartransport/services/userservice.dart';
 import 'package:thaartransport/utils/config.dart';
 import 'package:thaartransport/utils/constants.dart';
@@ -48,7 +46,9 @@ class _MyAppState extends State<MyApp> {
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
                   if (snapshot.hasData) {
-                    return HomePage();
+                    return HomePage(
+                      selectedIndex: 0,
+                    );
                   } else {
                     return SplashScreen();
                   }

@@ -21,4 +21,20 @@ class Validations {
       return 'Please enter a valid password.';
     return null;
   }
+
+  static String? validatePANNumber(value, [bool isRequried = true]) {
+    if (value.isEmpty && isRequried) return 'PAN Number is required.';
+
+    final RegExp nameExp = new RegExp('[A-Z]{5}[0-9]{4}[A-Z]{1}');
+    if (!nameExp.hasMatch(value) && isRequried) return 'Invalid Number';
+    return null;
+  }
+
+  static String? validateAadhaarNumber(value, [bool isRequried = true]) {
+    if (value.isEmpty && isRequried) return 'Aadhaar Number is required.';
+
+    final RegExp nameExp = new RegExp("^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}");
+    if (!nameExp.hasMatch(value) && isRequried) return 'Invalid Number';
+    return null;
+  }
 }

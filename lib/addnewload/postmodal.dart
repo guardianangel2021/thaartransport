@@ -22,13 +22,7 @@ class PostModal {
   String? dp;
   String? loadstatus;
   String? quantity;
-  String? rate;
-  String? bidtime;
-  String? biduserid;
-  String? bidresponse;
-  String? bidusername;
-  String? biduserlocation;
-  String? biduserdp;
+
   String? loadorderstatus;
   PostModal({
     required this.destinationlocation,
@@ -41,14 +35,7 @@ class PostModal {
     required this.quantity,
     required this.loadorderstatus,
     required this.ownerId,
-    required this.rate,
     required this.dp,
-    required this.bidtime,
-    required this.biduserid,
-    required this.bidusername,
-    required this.biduserlocation,
-    required this.biduserdp,
-    required this.bidresponse,
     required this.remarks,
     required this.paymentmode,
     required this.priceunit,
@@ -63,13 +50,6 @@ class PostModal {
     id = json['id'];
     loadstatus = json['loadstatus'];
     dp = json['dp'];
-    bidtime = json['bidtime'];
-    biduserid = json['biduserid'];
-    bidusername = json['bidusername'];
-    biduserdp = json['biduserdp'];
-    biduserlocation = json['biduserlocation'];
-    rate = json['rate'];
-    bidresponse = json['bidresponse'];
     loadorderstatus = json['loadorderstatus'];
     remarks = json['remarks'];
     postexpiretime = json['postexpiretime'];
@@ -85,18 +65,11 @@ class PostModal {
 
   Map<String, dynamic> toJson() {
     final data = Map<String, dynamic>();
-    data['rate'] = rate;
     data['destinationlocation'] = destinationlocation;
     data['sourcelocation'] = sourcelocation;
     data['expectedprice'] = expectedprice;
     data['id'] = id;
     data['dp'] = dp;
-    data['bidtime'] = bidtime;
-    data['biduserid'] = biduserid;
-    data['bidusername'] = bidusername;
-    data['biduserdp'] = biduserdp;
-    data['bidresponse'] = bidresponse;
-    data['biduserlocation'] = biduserlocation;
     data['loadorderstatus'] = loadorderstatus;
     data['remarks'] = remarks;
     data['postexpiretime'] = postexpiretime;

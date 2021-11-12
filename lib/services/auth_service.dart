@@ -43,7 +43,30 @@ class AuthService {
       "companyname": "",
       "role": "",
       "photourl": "",
-      "lastsigntime": Timestamp.now().toDate()
+      "lastsigntime": Timestamp.now().toDate(),
+      "UserKyc": {
+        'kycname': "",
+        "selfi": "",
+      },
+      "PANKyc": {
+        "pannumber": "",
+        "panfrontimg": "",
+        "panbackimg": "",
+      },
+      "AadhaarKyc": {
+        "aadhaarnumber": "",
+        "aadhaarfrontimg": "",
+        "aadhaarbackimg": "",
+      },
+      "OfficeKyc": {
+        "businessname": "",
+        "officeimg1": "",
+        "officeimg2": "",
+        "officeimg3": "",
+        "officeimg4": ""
+      },
+      "userkycstatus": "",
+      "companybio": {"esbmyear": "", "bio": ""}
     });
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => UserRegistration()));
@@ -56,7 +79,11 @@ class AuthService {
       "lastsigntime": Timestamp.now().toDate()
     });
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                  selectedIndex: 0,
+                )));
   }
 
   logOut(BuildContext context) async {

@@ -71,8 +71,12 @@ class _UploadRCState extends State<UploadRC> {
                       "truckposttime": Jiffy(DateTime.now()).yMMMMEEEEdjm,
                     });
 
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePage(
+                                  selectedIndex: 1,
+                                )));
                   }
                 },
                 child: Container(
